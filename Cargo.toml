@@ -1,0 +1,15 @@
+[package]
+name = "typid"
+version = "1.0.0"
+authors = ["Patryk 'PsichiX' Budzynski <psichix@gmail.com>"]
+edition = "2018"
+description = "(Typ)ed Unique (Id)entifiers"
+license = "MIT"
+homepage = "https://github.com/PsichiX/typid"
+repository = "https://github.com/PsichiX/typid"
+documentation = "https://docs.rs/typid"
+readme = "README.md"
+
+[dependencies]
+uuid = { version = "0.8", features = ["serde", "v4"] }
+serde = { version = "1.0", features = ["derive"] }
