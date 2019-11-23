@@ -10,6 +10,9 @@ repository = "https://github.com/PsichiX/typid"
 documentation = "https://docs.rs/typid"
 readme = "README.md"
 
+[features]
+web = ["uuid/wasm-bindgen"]
+
 [dependencies]
 uuid = { version = "0.8", features = ["serde", "v4"] }
 serde = { version = "1.0", features = ["derive"] }
