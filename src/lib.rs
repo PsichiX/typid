@@ -18,6 +18,7 @@
 use serde::{Deserialize, Serialize};
 use std::{
     cmp::Ordering,
+    convert::TryFrom,
     fmt,
     hash::{Hash, Hasher},
     marker::PhantomData,
@@ -25,9 +26,14 @@ use std::{
 };
 use uuid::Uuid;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct IDDef(pub String);
+
 /// Typed Unique Identifier (uuidv4).
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 #[repr(C)]
+#[serde(try_from = "IDDef")]
+#[serde(into = "IDDef")]
 pub struct ID<T> {
     id: Uuid,
     #[serde(skip_serializing, skip_deserializing)]
@@ -113,7 +119,8 @@ impl<T> PartialEq for ID<T> {
 }
 
 impl<T> Eq for ID<T> {}
-impl<T> Copy for ID<T> where T: Clone {}
+
+impl<T> Copy for ID<T> {}
 
 impl<T> PartialOrd for ID<T> {
     #[inline]
@@ -126,6 +133,29 @@ impl<T> Ord for ID<T> {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
         self.id.cmp(&other.id)
+    }
+}
+
+impl<T> Clone for ID<T> {
+    fn clone(&self) -> Self {
+        Self {
+            id: self.id.clone(),
+            _phantom: PhantomData,
+        }
+    }
+}
+
+impl<T> TryFrom<IDDef> for ID<T> {
+    type Error = String;
+
+    fn try_from(id: IDDef) -> Result<Self, Self::Error> {
+        Self::from_str(&id.0)
+    }
+}
+
+impl<T> Into<IDDef> for ID<T> {
+    fn into(self) -> IDDef {
+        IDDef(self.to_string())
     }
 }
 
