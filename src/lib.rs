@@ -8,11 +8,9 @@
 //!     pub id: ID<Foo>,
 //! }
 //!
-//! fn main() {
-//!     let a = Foo { id: ID::new() };
-//!     let b = Foo { id: ID::new() };
-//!     assert_ne!(a.id, b.id);
-//! }
+//! let a = Foo { id: ID::new() };
+//! let b = Foo { id: ID::new() };
+//! assert_ne!(a.id, b.id);
 //! ```
 
 use serde::{Deserialize, Serialize};
@@ -37,7 +35,7 @@ struct IDDef(pub String);
 pub struct ID<T> {
     id: Uuid,
     #[serde(skip_serializing, skip_deserializing)]
-    _phantom: PhantomData<T>,
+    _phantom: PhantomData<fn() -> T>,
 }
 
 impl<T> ID<T> {
@@ -139,7 +137,7 @@ impl<T> Ord for ID<T> {
 impl<T> Clone for ID<T> {
     fn clone(&self) -> Self {
         Self {
-            id: self.id.clone(),
+            id: self.id,
             _phantom: PhantomData,
         }
     }
@@ -153,6 +151,7 @@ impl<T> TryFrom<IDDef> for ID<T> {
     }
 }
 
+#[allow(clippy::from_over_into)]
 impl<T> Into<IDDef> for ID<T> {
     fn into(self) -> IDDef {
         IDDef(self.to_string())
