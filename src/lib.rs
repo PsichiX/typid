@@ -74,14 +74,13 @@ impl<T> Default for ID<T> {
 impl<T> fmt::Debug for ID<T> {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.to_string())
+        write!(f, "{}", self)
     }
 }
 
-impl<T> ToString for ID<T> {
-    #[inline]
-    fn to_string(&self) -> String {
-        format!("{}", self.id)
+impl<T> std::fmt::Display for ID<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.id)
     }
 }
 
@@ -136,10 +135,7 @@ impl<T> Ord for ID<T> {
 
 impl<T> Clone for ID<T> {
     fn clone(&self) -> Self {
-        Self {
-            id: self.id,
-            _phantom: PhantomData,
-        }
+        *self
     }
 }
 
